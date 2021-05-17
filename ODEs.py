@@ -24,7 +24,7 @@ def euler(f,a,b,n,y0):
     # init x_i's and y_i's
     x = np.linspace(a,b,n)
     y = np.zeros_like(x)
-    
+    y[0] = y0
     for i in range(0,len(x)-1):
         # distance to the next point to approximate
         d = [x[i+1]]-x[i]
@@ -44,7 +44,8 @@ def midpoint(f,a,b,n,y0):
     # init x_i's and y_i's
     x = np.linspace(a,b,n)
     y = np.zeros_like(x)
-    
+    y[0] = y0
+
     for i in range(0,len(x)-1):
         # distance to the next point to approximate
         dnext = [x[i+1]]-x[i]
@@ -68,7 +69,8 @@ def modeuler(f,a,b,n,y0):
     # init x_i's and y_i's
     x = np.linspace(a,b,n)
     y = np.zeros_like(x)
-    
+    y[0] = y0
+
     for i in range(0,len(x)-1):
         # distance to the next point to approximate
         d = [x[i+1]]-x[i]
@@ -95,9 +97,9 @@ ys_midpoint = midpoint(f,xmin,xmax,n,y0)
 ys_modeuler = modeuler(f,xmin,xmax,n,y0)
 
 fig,ax = plt.subplots()
-ax.plot(xs, ys_euler, marker='.', color='orange', label='euler')
-ax.plot(xs, ys_midpoint, color='green', label='midpoint' )
-ax.plot(xs, ys_modeuler, '--', color='blue', label='modeuler' )
+ax.plot(xs, ys_euler, label='euler')
+ax.plot(xs, ys_midpoint, label='midpoint' )
+ax.plot(xs, ys_modeuler, '--', label='modeuler' )
 
 ## add vector field data
 # generate a grid of points. (later arrow locations)
@@ -114,10 +116,10 @@ dx = np.ones_like(dy)
 # normalize arrows
 r = np.power(np.add(np.power(dx,2), np.power(dy,2)),0.5)
 
-quiveropts = dict(color='blue', units='xy', angles='xy', width=0.002)
+quiveropts = dict(color='pink', units='xy', angles='xy', width=0.02)
 ax.quiver(xgrid, ygrid, dx/r, dy/r, **quiveropts)
 
-fig.suptitle(f'numerical integration methods for $f(x,y(x)) = x^2+0.1*y(x)$ with initial value $(0,2)$')
+fig.suptitle(f'numerical integration methods for $x^2+0.1*y(x)$ with $x\in [{xmin},{xmax}], y_0 = {y0}$')
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 ax.grid()
