@@ -68,13 +68,44 @@ def midpoint(f,a,b,n,y0):
     
     for i in range(0,len(x)-1):
         # distance to the next point to approximate
-        d = np.abs(x[i]-[x[i+1]])
+        dnext = np.abs(x[i]-[x[i+1]])
+
+        # use Euler Method to calculate y of midpoint
+        ymid = y[i] + dnext/2 * f(x[i],y[i])
+        xmid = x[i] + dnext/2
 
         # slope at midpoint between next and current point
-        slope = f(x[i]+d/2,y[i])
+        slope = f(xmid,ymid)
 
         # to get the next point follow the slope for distance d
-        y[i+1] = y[i] + d * slope
+        y[i+1] = y[i] + dnext * slope
+
+    return y
+
+# Modified Euler / Heun's method for f with initial value y0
+# n steps in the interval [a,b].
+def modeuler(f,a,b,n,y0):
+
+    # init x_i's and y_i's
+    x = np.linspace(a,b,n)
+    y = np.zeros_like(x)
+    
+    for i in range(0,len(x)-1):
+        # distance to the next point to approximate
+        d = np.abs(x[i]-[x[i+1]])
+
+        # slope at the current point
+        slope_here = f(x[i],y[i])
+
+        # use slope to find a temporary y
+        ytemp = y[i] + d * slope_here
+
+        # use ytemp to find slope on the other side of the discretization step
+        slope_next = f(x[i+1],ytemp)
+        slope_avg = (slope_here + slope_next)/2
+
+        # to get the next point follow the average slope for distance d
+        y[i+1] = y[i] + d * slope_avg
 
     return y
 
@@ -87,4 +118,8 @@ plt.plot(xs_euler, ys_euler)
 
 ys_midpoint = midpoint(f,xmin,xmax,15,2)
 plt.plot(xs_euler, ys_midpoint)
+
+ys_modeuler = modeuler(f,xmin,xmax,15,2)
+plt.plot(xs_euler, ys_modeuler)
+
 plt.show()
