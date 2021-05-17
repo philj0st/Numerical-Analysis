@@ -8,32 +8,8 @@ def f(x,y):
 
 xmin = -2
 xmax = 2
-xstep = .2
-
-ymin = -2
-ymax = 2
-ystep = .2
-
-
-# generate a grid of points. (later arrow locations)
-xs = np.arange(xmin,xmax + xstep,xstep, dtype=np.float64)
-ys = np.arange(ymin,ymax + ystep,ystep, dtype=np.float64)
-[xgrid, ygrid] = np.meshgrid(xs,ys)
-
-
-
-# evaluate x and y direction components of the arrow vectors
-# (if a curve goes through those points it has this slope)
-dy = f(xgrid,ygrid)
-dx = np.ones_like(dy)
-
-# normalize arrows
-r = np.power(np.add(np.power(dx,2), np.power(dy,2)),0.5)
-
-quiveropts = dict(color='blue', units='xy', angles='xy', width=0.002)
-
-fig,ax = plt.subplots()
-ax.quiver(xgrid, ygrid, dx/r, dy/r, **quiveropts)
+n = 15
+y0 = 2
 
 
 # numerically integrate ODEs with different methods
@@ -109,22 +85,42 @@ def modeuler(f,a,b,n,y0):
 
     return y
     
+# data to plot
+xs = np.linspace(xmin,xmax,n,dtype=np.float64)
+ys_euler  = euler(f,xmin,xmax,n,y0)
+ys_midpoint = midpoint(f,xmin,xmax,n,y0)
+ys_modeuler = modeuler(f,xmin,xmax,n,y0)
 
-xs_ = np.linspace(xmin,xmax,15)
-ys_euler  = euler(f,xmin,xmax,15,2)
-ys_midpoint = midpoint(f,xmin,xmax,15,2)
-ys_modeuler = modeuler(f,xmin,xmax,15,2)
+fig,ax = plt.subplots()
+ax.plot(xs, ys_euler, marker='.', color='orange', label='euler')
+ax.plot(xs, ys_midpoint, color='green', label='midpoint' )
+ax.plot(xs, ys_modeuler, '--', color='blue', label='modeuler' )
+
+## add vector field data
+# generate a grid of points. (later arrow locations)
+(ymin, ymax) =  ax.get_ylim()
+ys = np.linspace(ymin,ymax,n)
+[xgrid, ygrid] = np.meshgrid(xs,ys)
+
+
+# evaluate x and y direction components of the arrow vectors
+# (if a curve goes through those points it has this slope)
+dy = f(xgrid,ygrid)
+dx = np.ones_like(dy)
+
+# normalize arrows
+r = np.power(np.add(np.power(dx,2), np.power(dy,2)),0.5)
+
+quiveropts = dict(color='blue', units='xy', angles='xy', width=0.002)
+ax.quiver(xgrid, ygrid, dx/r, dy/r, **quiveropts)
 
 fig.suptitle(f'different numerical integration methods for $x^2+0.1*y$ with initial value $(0,2)$')
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 ax.grid()
  
-ax.plot(xs_, ys_euler, marker='.', color='orange', label='euler')
- 
-ax.plot(xs_, ys_midpoint, color='green', label='midpoint' )
 
-ax.plot(xs_, ys_modeuler, '--', color='blue', label='modeuler' )
+
 
 ax.legend()
 plt.show()
