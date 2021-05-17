@@ -36,7 +36,7 @@ plt.quiver(xgrid, ygrid, dx/r, dy/r, **quiveropts)
 
 
 # %%
-# numerically solve some ODEs with different methods
+# numerically integrate ODEs with different methods
 
 # Euler Method for f with initial value y0
 # n steps in the interval [a,b].
@@ -58,10 +58,33 @@ def euler(f,a,b,n,y0):
 
     return y
 
+# Midpoint method for f with initial value y0
+# n steps in the interval [a,b].
+def midpoint(f,a,b,n,y0):
+
+    # init x_i's and y_i's
+    x = np.linspace(a,b,n)
+    y = np.zeros_like(x)
+    
+    for i in range(0,len(x)-1):
+        # distance to the next point to approximate
+        d = np.abs(x[i]-[x[i+1]])
+
+        # slope at midpoint between next and current point
+        slope = f(x[i]+d/2,y[i])
+
+        # to get the next point follow the slope for distance d
+        y[i+1] = y[i] + d * slope
+
+    return y
+
 def f(x,y):
     return x**2 + 0.1 * y
     
 ys_euler  = euler(f,xmin,xmax,15,2)
 xs_euler = np.linspace(xmin,xmax,15)
 plt.plot(xs_euler, ys_euler)
+
+ys_midpoint = midpoint(f,xmin,xmax,15,2)
+plt.plot(xs_euler, ys_midpoint)
 plt.show()
