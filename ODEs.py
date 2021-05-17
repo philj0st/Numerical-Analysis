@@ -6,13 +6,16 @@ import matplotlib.pyplot as plt
 def f(x,y):
     return x**2 + 0.1 * y
 
+# define interval borders
 xmin = -2
 xmax = 2
+# discretization resolution
 n = 15
+# initial value
 y0 = 2
 
 
-# numerically integrate ODEs with different methods
+## numerically integrate ODEs with different methods
 
 # Euler Method for f with initial value y0
 # n steps in the interval [a,b].
@@ -85,7 +88,7 @@ def modeuler(f,a,b,n,y0):
 
     return y
     
-# data to plot
+## data to plot
 xs = np.linspace(xmin,xmax,n,dtype=np.float64)
 ys_euler  = euler(f,xmin,xmax,n,y0)
 ys_midpoint = midpoint(f,xmin,xmax,n,y0)
@@ -114,13 +117,9 @@ r = np.power(np.add(np.power(dx,2), np.power(dy,2)),0.5)
 quiveropts = dict(color='blue', units='xy', angles='xy', width=0.002)
 ax.quiver(xgrid, ygrid, dx/r, dy/r, **quiveropts)
 
-fig.suptitle(f'different numerical integration methods for $x^2+0.1*y$ with initial value $(0,2)$')
+fig.suptitle(f'numerical integration methods for $f(x,y(x)) = x^2+0.1*y(x)$ with initial value $(0,2)$')
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 ax.grid()
- 
-
-
-
 ax.legend()
 plt.show()
