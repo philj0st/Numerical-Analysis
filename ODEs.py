@@ -2,8 +2,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 1st derivative of f
-def f_1(x,y):
+# the ODE function we want to work with
+def f(x,y):
     return x**2 + 0.1 * y
 
 xmin = -2
@@ -24,7 +24,7 @@ ys = np.arange(ymin,ymax + ystep,ystep, dtype=np.float64)
 
 # evaluate x and y direction components of the arrow vectors
 # (if a curve goes through those points it has this slope)
-dy = f_1(xgrid,ygrid)
+dy = f(xgrid,ygrid)
 dx = np.ones_like(dy)
 
 # normalize arrows
@@ -32,10 +32,10 @@ r = np.power(np.add(np.power(dx,2), np.power(dy,2)),0.5)
 
 quiveropts = dict(color='blue', units='xy', angles='xy', width=0.002)
 
-plt.quiver(xgrid, ygrid, dx/r, dy/r, **quiveropts)
+fig,ax = plt.subplots()
+ax.quiver(xgrid, ygrid, dx/r, dy/r, **quiveropts)
 
 
-# %%
 # numerically integrate ODEs with different methods
 
 # Euler Method for f with initial value y0
@@ -48,7 +48,7 @@ def euler(f,a,b,n,y0):
     
     for i in range(0,len(x)-1):
         # distance to the next point to approximate
-        d = np.abs(x[i]-[x[i+1]])
+        d = [x[i+1]]-x[i]
 
         # slope at current point
         slope = f(x[i],y[i])
@@ -68,7 +68,7 @@ def midpoint(f,a,b,n,y0):
     
     for i in range(0,len(x)-1):
         # distance to the next point to approximate
-        dnext = np.abs(x[i]-[x[i+1]])
+        dnext = [x[i+1]]-x[i]
 
         # use Euler Method to calculate y of midpoint
         ymid = y[i] + dnext/2 * f(x[i],y[i])
@@ -92,7 +92,7 @@ def modeuler(f,a,b,n,y0):
     
     for i in range(0,len(x)-1):
         # distance to the next point to approximate
-        d = np.abs(x[i]-[x[i+1]])
+        d = [x[i+1]]-x[i]
 
         # slope at the current point
         slope_here = f(x[i],y[i])
@@ -108,18 +108,23 @@ def modeuler(f,a,b,n,y0):
         y[i+1] = y[i] + d * slope_avg
 
     return y
-
-def f(x,y):
-    return x**2 + 0.1 * y
     
+
+xs_ = np.linspace(xmin,xmax,15)
 ys_euler  = euler(f,xmin,xmax,15,2)
-xs_euler = np.linspace(xmin,xmax,15)
-plt.plot(xs_euler, ys_euler)
-
 ys_midpoint = midpoint(f,xmin,xmax,15,2)
-plt.plot(xs_euler, ys_midpoint)
-
 ys_modeuler = modeuler(f,xmin,xmax,15,2)
-plt.plot(xs_euler, ys_modeuler)
 
+fig.suptitle(f'different numerical integration methods for $x^2+0.1*y$ with initial value $(0,2)$')
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.grid()
+ 
+ax.plot(xs_, ys_euler, marker='.', color='orange', label='euler')
+ 
+ax.plot(xs_, ys_midpoint, color='green', label='midpoint' )
+
+ax.plot(xs_, ys_modeuler, '--', color='blue', label='modeuler' )
+
+ax.legend()
 plt.show()
