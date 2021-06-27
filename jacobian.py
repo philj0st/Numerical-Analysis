@@ -49,21 +49,31 @@ def a3():
     f = sp.Matrix([f1,f2,f3])
     X = sp.Matrix([x1,x2,x3])
 
+    # Df(x) substitutes variables i.e 3*x1^2 inside partial derivative formuli with value
     Df = f.jacobian(X)
 
     # lambdify for use with numpy values
     func = sp.lambdify([(x1,x2,x3)], f, "numpy")
     jac = sp.lambdify([(x1,x2,x3)], Df, "numpy")
 
-    # get jacobian at point v for slopes in all dimensions
-    v = np.array([1.5,3,2.5])
-    DF = jac(v)
+
+    # evaluate f(v0) 
+    v0 = np.array([1.5,3,2.5])
+
+    # evaluate jacobian at point v0 for slopes in all dimensions
+    DF = jac(v0).flatten()
+
+    # now choose v1 in vicinity of v0
+    offset = np.array([0.1,0.1,0.1])
+    v1 = v0+offset
+    
+    # evaluating f(v0) and following the slope along the linearization 
+    # should yeald a result close to actually evaluating f(v1) while still in v0's vicinity.
+    pprint(func(v1))
 
     # tangent plane equation for linearization
     # around neighbourhood of point v 
-    def g(x): func(v)+jac(v)*(x-v)
-
-    pprint(func(v))
-    # g(v+delta) is close to func(v+delta) in vicinity of v
-    pprint(DF)
+    def g(v_next,v): return (func(v).flatten()+jac(v)@(v_next-v)).flatten()
+    pprint(g(v1,v0))
 a3()
+
