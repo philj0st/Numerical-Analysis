@@ -14,10 +14,10 @@ ref_y_int = CubicSpline(x,y,bc_type='natural')(x_int)
 p = np.polyfit(x-1900,y,11)
 poly_y_fit = np.polyval(p,x_int-1900)
 
-# PLOTTING
+#region plots
  
 fig,ax = plt.subplots()
-ax.set_xlabel('Jahr')
+ax.set_xlabel('Year')
 ax.set_ylabel(f'USA Population [in Millions]')
 
 ax.grid()
@@ -33,5 +33,4 @@ ax.plot(x_int, poly_y_fit, color='blue', label='polyfit deg 11' )
 ax.legend()
 plt.show()
 
-# c) somit vermeiden wir unnoetig grosse zahlen und dadurch eine schlechtere konditionierung.
-#    ohne die anpassung kriegen wir auch eine warnung von numpy.
+#endregion
