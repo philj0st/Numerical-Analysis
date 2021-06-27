@@ -62,11 +62,25 @@ def newtonIteration(x_0,Df,stop):
 x = newtonIteration(x0,jac,lambda x:len(x)==3)
 
 
-# run until really close to roots
+# run until really close to root
 tol = 1e-10
-def closeToZero(x):
+def closeToRoot(x):
     # iterate until error is less than tolerance
     return np.linalg.norm(F(x[-1]))<tol
 
-x = newtonIteration(x0,jac,closeToZero)
+x = newtonIteration(x0,jac,closeToRoot)
 sp.pprint(x)
+
+
+# find roots for different starting points:
+x01 = np.array([[-1200,1600]])
+x02 = np.array([[-220,100]])
+x03 = np.array([[750,950]])
+x04 = np.array([[250,250]])
+
+roots = []
+
+for x_0 in [x01,x02,x03,x04]:
+    root = newtonIteration(x_0,Df,f,closeToRoot)[-1]
+    print(root)
+    roots.append(root)
